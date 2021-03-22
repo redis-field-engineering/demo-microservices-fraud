@@ -1,0 +1,32 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block metas %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block styles %}
+  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="//jqueryui.com/resources/demos/style.css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <center>
+    <h2>Login page<h2>
+    <h3>
+     You are logged in as: {{ user }}<br><br>
+     <a href="/">Start Shopping<a>
+     <br><br>
+     <a href="/login/logout?user={{user}}">Log Out<a>
+    </h3>
+
+    </center>
+
+</div>
+{% endblock %}
+ 

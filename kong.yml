@@ -11,8 +11,6 @@ services:
     strip_path: true
     paths: 
       - /login
-  plugins:
-    - name: request-transformer
 - name: catalog
   url: http://192.168.0.228:5012
   tags:
@@ -31,3 +29,11 @@ services:
     paths:
     - /
   plugins:
+
+plugins:
+- name: request-transformer
+  route: login-route
+  config:
+    add:
+      headers:
+        - x-ms-prefix:/login

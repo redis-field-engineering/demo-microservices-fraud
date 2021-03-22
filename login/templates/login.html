@@ -1,0 +1,39 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block metas %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block styles %}
+  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="//jqueryui.com/resources/demos/style.css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <center>
+    <h2>Login page<h2>
+    </center>
+    <div class="form-group">
+      <label for="userSelect">Select User</label>
+      <form action = "{{ ms_prefix }}/dologin" method = "POST">
+      <select class="form-control" id="userSelect"  name="user">
+      {% for tg in userlist.keys()|sort() %}
+        <option value={{tg}}> {{ tg }} </option>
+      {% endfor %}
+      </select>
+      <div class="form-group">
+        <br><br>
+        <p><input type = "submit" value = "Login" /></p>
+      </div>
+    </div>
+    </form>
+
+</div>
+{% endblock %}
+ 

@@ -16,26 +16,28 @@ app = Flask(__name__,
 SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
 
-if environ.get('TOP_URL') is not None:
-   top_url = environ.get('TOP_URL')
-else:
-   top_url = ""
-
 bootstrap = Bootstrap()
-
-nav = Nav()
-topbar = Navbar('',
-    View('Home', 'index'),
-)
 
 #================== Start Routes =================================
 
-@app.route('/login')
+@app.route('/')
 def login():
     if session.get('username'):
-        return "Logged in as %s" %session.get('username')
+        return render_template('loggedin.html', user=session.get('username'), ms_prefix=request.headers.get('X-Forwarded-Prefix'))
     else:
-        return "LOGIN GOES HERE"
+        return render_template('login.html', userlist={'chris@example.com': 2112, 'reiko@example.com': 2111}, ms_prefix=request.headers.get('X-Forwarded-Prefix'))
+
+@app.route('/dologin', methods = ['POST'])
+def dologin():
+        form = request.form.to_dict()
+        session['username'] = form['user']
+        return render_template('loggedin.html', user=session.get('username'))
+
+@app.route('/logout')
+def dologout():
+    username = request.args.get('user')
+    session.clear()
+    return "logged out %s" %username
 
 #================== End Routes =================================
 
@@ -43,6 +45,5 @@ if __name__ == '__main__':
     sess = Session(app)
     bootstrap.init_app(app)
     sess.init_app(app)
-    nav.init_app(app)
     app.debug = True
     app.run(port=5011, host="0.0.0.0")
