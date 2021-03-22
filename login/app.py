@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from flask_bootstrap import Bootstrap
-from flask_nav import Nav
-from flask_nav.elements import Navbar, View
 import redis
-import json
-import hashlib
 from os import environ
+
+# From our local file
+from dataload import load_data
 
 app = Flask(__name__,
             static_url_path='/docs',
@@ -16,15 +15,34 @@ app = Flask(__name__,
 SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
 
-#nav = Nav()
-#topbar = Navbar('',
-#    View('Login', 'login'),
-#    View('Logout', 'dologout'),
-#)
-#nav.register_element('top', topbar)
-
-
 bootstrap = Bootstrap()
+#================== Redis Config =================================
+if environ.get('REDIS_SERVER') is not None:
+   redis_server = environ.get('REDIS_SERVER')
+else:
+   redis_server = 'localhost'
+
+if environ.get('REDIS_PORT') is not None:
+   redis_port = int(environ.get('REDIS_PORT'))
+else:
+   redis_port = 6379
+
+if environ.get('REDIS_PASSWORD') is not None:
+   redis_password = environ.get('REDIS_PASSWORD')
+else:
+   redis_password = ''
+
+if environ.get('USER_DATA') is not None:
+   user_data = environ.get('USER_DATA')
+else:
+   user_data = './userdata.csv'
+
+
+redis = redis.Redis(
+   host=redis_server,
+   password=redis_password,
+   port=redis_port
+   )
 
 #================== Start Routes =================================
 
@@ -36,6 +54,12 @@ def cleanPrefix(mypre):
 
 @app.route('/')
 def login():
+    if not redis.exists("USER_LIST"):
+        load_data(redis_server, redis_port, redis_password, user_data)
+
+    users = []
+    for x in redis.smembers("USER_LIST"):
+        users.append(x.decode('utf-8'))
     if session.get('username'):
         return render_template(
             'loggedin.html',
@@ -45,7 +69,7 @@ def login():
     else:
         return render_template(
             'login.html',
-            userlist={'chris@example.com': 2112, 'reiko@example.com': 2111},
+            userlist=users,
             ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
             )
 
@@ -59,14 +83,13 @@ def dologin():
 def dologout():
     username = request.args.get('user')
     session.clear()
-    return "<html><head><meta http-equiv=\"refresh\" content=\"5;url=%s\"/></head>logged out %s</html}" %(cleanPrefix(request.headers.get('X-Forwarded-Prefix')),username)
+    return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))
 
 #================== End Routes =================================
 
 if __name__ == '__main__':
     sess = Session(app)
     bootstrap.init_app(app)
-#    nav.init_app(app)
     sess.init_app(app)
     app.debug = True
     app.run(port=5011, host="0.0.0.0")

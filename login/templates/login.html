@@ -23,7 +23,7 @@
       <label for="userSelect">Select User</label>
       <form action = "{{ ms_prefix }}/dologin" method = "POST">
       <select class="form-control" id="userSelect"  name="user">
-      {% for tg in userlist.keys()|sort() %}
+      {% for tg in userlist|sort() %}
         <option value={{tg}}> {{ tg }} </option>
       {% endfor %}
       </select>
