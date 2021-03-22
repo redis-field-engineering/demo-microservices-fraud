@@ -16,6 +16,14 @@ app = Flask(__name__,
 SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
 
+#nav = Nav()
+#topbar = Navbar('',
+#    View('Login', 'login'),
+#    View('Logout', 'dologout'),
+#)
+#nav.register_element('top', topbar)
+
+
 bootstrap = Bootstrap()
 
 #================== Start Routes =================================
@@ -51,13 +59,14 @@ def dologin():
 def dologout():
     username = request.args.get('user')
     session.clear()
-    return "logged out %s" %username
+    return "<html><head><meta http-equiv=\"refresh\" content=\"5;url=%s\"/></head>logged out %s</html}" %(cleanPrefix(request.headers.get('X-Forwarded-Prefix')),username)
 
 #================== End Routes =================================
 
 if __name__ == '__main__':
     sess = Session(app)
     bootstrap.init_app(app)
+#    nav.init_app(app)
     sess.init_app(app)
     app.debug = True
     app.run(port=5011, host="0.0.0.0")

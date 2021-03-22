@@ -27,3 +27,29 @@
      <link rel="stylesheet" type="text/css"
            href="{{url_for('static', filename='sample-app.css')}}">
  {% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#557adf0431304df7ad61d31ed8f7749c0706dbfe" data-toggle="collapse" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand"></span>
+    </div>
+    <div class="navbar-collapse collapse" id="557adf0431304df7ad61d31ed8f7749c0706dbfe">
+      <ul class="nav navbar-nav">
+        <li class="active">
+          <a href="/" title="Login">Login</a>
+        </li>
+        <li>
+          <a href="/logout" title="Logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}
