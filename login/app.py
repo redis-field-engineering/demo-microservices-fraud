@@ -20,12 +20,26 @@ bootstrap = Bootstrap()
 
 #================== Start Routes =================================
 
+def cleanPrefix(mypre):
+    if mypre:
+        return mypre
+    else:
+        return ""
+
 @app.route('/')
 def login():
     if session.get('username'):
-        return render_template('loggedin.html', user=session.get('username'), ms_prefix=request.headers.get('X-Forwarded-Prefix'))
+        return render_template(
+            'loggedin.html',
+            user=session.get('username'),
+            ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+            )
     else:
-        return render_template('login.html', userlist={'chris@example.com': 2112, 'reiko@example.com': 2111}, ms_prefix=request.headers.get('X-Forwarded-Prefix'))
+        return render_template(
+            'login.html',
+            userlist={'chris@example.com': 2112, 'reiko@example.com': 2111},
+            ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+            )
 
 @app.route('/dologin', methods = ['POST'])
 def dologin():
