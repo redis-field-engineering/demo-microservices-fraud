@@ -1,0 +1,31 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+- name: root
+  url: http://192.168.0.228:5010
+  tags:
+  - top
+  routes:
+  - name: top-route
+    paths:
+    - /
+  plugins:
+- name: login
+  url: http://192.168.0.228:5011
+  tags:
+  - login
+  routes:
+  - name: login-route
+    paths:
+    - /login
+  plugins:
+- name: catalog
+  url: http://192.168.0.228:5012
+  tags:
+  - catalog
+  routes:
+  - name: catalog-route
+    paths:
+    - /catalog
+  plugins:

@@ -6,6 +6,7 @@ from flask_nav.elements import Navbar, View
 import redis
 import json
 import hashlib
+from os import environ
 
 app = Flask(__name__,
             static_url_path='/docs',
@@ -14,6 +15,11 @@ app = Flask(__name__,
 
 SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
+
+if environ.get('TOP_URL') is not None:
+   top_url = environ.get('TOP_URL')
+else:
+   top_url = ""
 
 bootstrap = Bootstrap()
 
@@ -36,12 +42,7 @@ def index():
                     "username": session.get('username')
                     })
     else:
-        return redirect("/login", code=302)
-
-@app.route('/login')
-def login():
-    session['username'] = "chris"
-    return "LOGIN GOES HERE"
+        return redirect("%s/login" %top_url, code=302)
 
 #================== End Routes =================================
 
@@ -52,7 +53,3 @@ if __name__ == '__main__':
     nav.init_app(app)
     app.debug = True
     app.run(port=5010, host="0.0.0.0")
-
-
-
-
