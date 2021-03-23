@@ -12,7 +12,7 @@ services:
     paths: 
       - /login
 - name: catalog
-  url: http://192.168.0.228:5012
+  url: http://192.168.0.228:5015
   tags:
   - catalog
   routes:
