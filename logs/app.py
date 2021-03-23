@@ -54,7 +54,6 @@ redis = redis.Redis(
 def show_logs():
    lines = []
    logs = redis.xrevrange(log_stream,  max='+', min='-')
-   print(logs)
    for log in logs:
       line = [
          datetime.utcfromtimestamp(int(log[0].decode('utf-8').split('-')[0])/1000).isoformat()
