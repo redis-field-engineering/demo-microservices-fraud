@@ -83,7 +83,11 @@ def dologin():
         form = request.form.to_dict()
         session['username'] = form['user']
         redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
-        return render_template('loggedin.html', user=session.get('username'))
+        return render_template(
+           'loggedin.html',
+           user=session.get('username'),
+           ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+           )
 
 @app.route('/logout')
 def dologout():
