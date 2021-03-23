@@ -37,6 +37,11 @@ if environ.get('USER_DATA') is not None:
 else:
    user_data = './userdata.csv'
 
+if environ.get('LOG_STREAM') is not None:
+   log_stream = environ.get('LOG_STREAM')
+else:
+   log_stream = 'microservice-logs'
+
 
 redis = redis.Redis(
    host=redis_server,
@@ -77,12 +82,14 @@ def login():
 def dologin():
         form = request.form.to_dict()
         session['username'] = form['user']
+        redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
         return render_template('loggedin.html', user=session.get('username'))
 
 @app.route('/logout')
 def dologout():
     username = request.args.get('user')
     session.clear()
+    redis.xadd(log_stream, {"microservice": "login", "user": username, "message": "%s has logged out" %(username)})
     return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))
 
 #================== End Routes =================================

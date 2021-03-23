@@ -17,8 +17,19 @@ services:
   - catalog
   routes:
   - name: catalog-route
+    strip_path: true
     paths:
     - /catalog
+  plugins:
+- name: logs
+  url: http://192.168.0.228:5019
+  tags:
+  - logs
+  routes:
+  - name: logs-route
+    strip_path: true
+    paths:
+    - /logs
   plugins:
 - name: root
   url: http://192.168.0.228:5010

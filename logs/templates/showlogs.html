@@ -1,0 +1,62 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Logs{% endblock %}
+
+{% block metas %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block styles %}
+  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="//jqueryui.com/resources/demos/style.css">
+{% endblock %}
+
+
+{% block content %}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/" title="Home">Home</a>
+        </li>
+        <li class="active">
+          <a href="{{ ms_prefix }}/" title="Logs">Logs</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+    <center>
+    <h2>Logs page<h2>
+    </center>
+    <div class="form-group">
+      <form action = "{{ ms_prefix }}/clean" method = "POST">
+      <div class="form-group">
+        <p><input type = "submit" value = "Reset Logs" /></p>
+      </div>
+    </div>
+    </form>
+<table class="table table-dark">
+<tr>
+  <th>Timestamp</th>
+  {% for h in log_fields %}
+  <th>{{ h }}</th>
+  {% endfor %}
+</tr>
+  {% for log  in logs %}
+     <tr>
+      {% for x in log %} 
+        <td> {{ x }} </td>
+      {% endfor %} 
+     </tr>
+  {% endfor %}
+</table>
+
+</div>
+{% endblock %}
+ 
