@@ -20,6 +20,7 @@ services:
     strip_path: true
     paths:
     - /catalog
+    - /
   plugins:
 - name: logs
   url: http://192.168.0.228:5019
@@ -30,15 +31,6 @@ services:
     strip_path: true
     paths:
     - /logs
-  plugins:
-- name: root
-  url: http://192.168.0.228:5010
-  tags:
-  - top
-  routes:
-  - name: top-route
-    paths:
-    - /
   plugins:
 
 plugins:
