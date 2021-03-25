@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, redirect 
-from flask_bootstrap import Bootstrap
 import redis
 from os import environ
 from datetime import datetime
 
 app = Flask(__name__)
 
-bootstrap = Bootstrap()
 
 def cleanPrefix(mypre):
     if mypre:
@@ -76,6 +74,5 @@ def cleanlogs():
 #================== End Routes =================================
 
 if __name__ == '__main__':
-    bootstrap.init_app(app)
     app.debug = True
     app.run(port=5019, host="0.0.0.0")
