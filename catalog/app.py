@@ -40,7 +40,7 @@ else:
 if environ.get('NEXT_STAGE') is not None:
    next_stream = environ.get('NEXT_STAGE')
 else:
-   next_stream = 'identity'
+   next_stream = 'CHECK-IDENTITY'
 
 
 redis = redis.Redis(
