@@ -1,50 +1,57 @@
-{% extends "bootstrap/base.html" %}
-{% block title %}Catalog{% endblock %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% block metas %}
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-{% endblock %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
-{% block styles %}
-  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="//jqueryui.com/resources/demos/style.css">
-{% endblock %}
-
-
-{% block content %}
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li>
-          <a href="/" title="Home">Home</a>
-        </li>
-        <li class="active">
-          <a href="{{ ms_prefix }}/" title="Catalog">Catalog</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
+    <title>Shop</title>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Shopping</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Catalog</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Cart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logs">Logs</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            User: {{ username }}  FraudScore: {{ fraudscore }}
+          </span>
+        </div>
+      </div>
+    </nav>
+  </head>
+  <body>
 
 <div class="container">
-    <center>
-    <h2>Products<h2>
-    </center>
-    <div class="form-group">
-      <form action = "{{ ms_prefix }}/" method = "POST">
-      <div class="form-group">
-        <input id="search" class="form-control" name="search">
-        <input type = "submit" value = "Search" />
-      </div>
-      <div class="form-group">
-      </div>
-    </div>
+  <center>
+  <h2>Products<h2>
+  </center>
+  <div class="form-group">
+    <form class="d-flex" action = "{{ ms_prefix }}/" method = "POST">
+      <input id="search" class="form-control" name="search">
+      <input class="btn btn-outline-success" type = "submit" value = "Search" />
     </form>
-<table class="table table-dark">
+    <br><br>
+  </div>
+
+<table class="table table-striped">
 <tr>
   <th>Product</th>
   <th>Category</th>
@@ -68,5 +75,6 @@
 </table>
 
 </div>
-{% endblock %}
- 
+
+  </body>
+</html>
