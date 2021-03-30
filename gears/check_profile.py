@@ -9,7 +9,7 @@ def checkProfile(msg):
     
     if msg['value']['user'] == "Guest":
         next_stage = "CART-ADD"
-    elif score <= 1.0:
+    elif score + float(msg['value']['identity_score']) < 1.5:
         next_stage = "CHECK-AI"
     else:
         next_stage = "CART-ADD"
