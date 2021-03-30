@@ -18,10 +18,10 @@
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Catalog</a>
+              <a class="nav-link active" aria-current="page" href="/catalog">Catalog</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/cart">Cart</a>
+              <a class="nav-link" href="#">Cart</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/login">Login</a>
@@ -41,38 +41,36 @@
 
 <div class="container">
   <center>
-  <h2>Products<h2>
+  <h2>Shopping cart<h2>
   </center>
-  <div class="form-group">
-    <form class="d-flex" action = "{{ ms_prefix }}/" method = "POST">
-      <input id="search" class="form-control" name="search">
-      <input class="btn btn-outline-success" type = "submit" value = "Search" />
-    </form>
-    <br><br>
-  </div>
 
 <table class="table table-striped">
 <tr>
   <th>Product</th>
-  <th>Category</th>
+  <th>Quantity</th>
   <th>Price</th>
+  <th>Cost</th>
   <th></th>
 </tr>
   {% for entry  in entries %}
      <tr>
-     <td>{{ entry['product'] }} </td>
-     <td>{{ entry['category'] }} </td>
-     <td>{{ entry['price'] }} </td>
+     <td>{{ entry['product_name'] }} </td>
+     <td>{{ entry['quantity'] }} </td>
+     <td>{{ "%.2f"|format(entry['unit_price']|float) }} </td>
      <td>
-      <form action = "{{ ms_prefix }}/purchase" method = "POST">
-      <input id="quantity" type="text" size="1" name="quantity" value="1">
-      <input id="item" type="hidden" name="item" value="{{ entry['product_id'] }}">
-      <input type = "submit" value = "Purchase" />
-      </form>
-      </td>
+        {{ "%.2f"|format(entry['quantity'] | int * entry['unit_price'] |float) }}
+     </td>
      </tr>
   {% endfor %}
+  <tr><td style="text-align:right;" colspan="3"><b>Total</b></td><td><b>${{ "%.2f"|format(carttotal|float) }}</b>
+  </td><tr>
 </table>
+<div class="form-group" >
+<form class="d-flex" action = "{{ ms_prefix }}/checkout" method = "POST">
+  <input  class="btn btn-outline-success" type = "submit" value = "Checkout" />
+</form>
+</div>
+
 
 </div>
 

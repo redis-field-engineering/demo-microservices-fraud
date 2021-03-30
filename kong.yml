@@ -32,6 +32,15 @@ services:
     paths:
     - /logs
   plugins:
+- name: cart
+  url: http://192.168.0.228:5018
+  tags:
+  - cart
+  routes:
+  - name: cart-route
+    strip_path: true
+    paths:
+    - /cart
 
 plugins:
 - name: request-transformer
