@@ -107,9 +107,11 @@ def purchase():
       "product_id": item['product_id'],
       "product_name": item['product'],
       "category": item['category'],
+      "level": item['level'],
       "unit_price": item['price'],
       "user": session.get('username'),
       "action": "enhance",
+      "ipaddr": request.remote_addr,
       "fingerprint": hashlib.md5(request.headers.get('User-Agent').encode('utf-8')).hexdigest(),
       "session": session.sid,
    }
