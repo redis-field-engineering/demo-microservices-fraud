@@ -22,8 +22,10 @@ def checkId(msg):
                 )
             
     elif  msg['value']['action'] == "update" and msg['value']['user'] != "Guest":
-        execute('SADD', "Identity:%s:IPS" % msg['value']['user'], msg['value']['ipaddr'])
-        execute('SADD', "Identity:%s:BrowserFingerprint" % msg['value']['user'], msg['value']['fingerprint'])
+        if 'ipaddr' in msg['value']:
+            execute('SADD', "Identity:%s:IPS" % msg['value']['user'], msg['value']['ipaddr'])
+        if 'fingerprint' in msg['value']:
+            execute('SADD', "Identity:%s:BrowserFingerprint" % msg['value']['user'], msg['value']['fingerprint'])
         execute(
                 'XADD', 'microservice-logs', '*',
                 'microservice', 'identity',

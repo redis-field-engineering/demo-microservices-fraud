@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from flask_bootstrap import Bootstrap
 import redis
+import hashlib
 from os import environ
 
 # From our local file
@@ -80,14 +81,24 @@ def login():
 
 @app.route('/dologin', methods = ['POST'])
 def dologin():
-        form = request.form.to_dict()
-        session['username'] = form['user']
-        redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
-        return render_template(
-           'loggedin.html',
-           user=session.get('username'),
-           ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
-           )
+      form = request.form.to_dict()
+      session['username'] = form['user']
+      
+      if 'browser' in form or 'ipaddr' in form:
+         msg = {'action': 'update', 'user': form['user']}
+         if 'browser' in form:
+            msg['fingerprint'] = hashlib.md5(request.headers.get('User-Agent').encode('utf-8')).hexdigest()
+         if 'ipaddr' in form:
+            msg['ipaddr'] = request.remote_addr
+         redis.xadd('CHECK-IDENTITY', msg)
+         redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has updated identity" %(form['user'])})
+ 
+      redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
+      return render_template(
+         'loggedin.html',
+         user=session.get('username'),
+         ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+         )
 
 @app.route('/logout')
 def dologout():
