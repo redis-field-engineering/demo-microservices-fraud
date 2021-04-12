@@ -67,17 +67,18 @@ def login():
     for x in redis.smembers("USER_LIST"):
         users.append(x.decode('utf-8'))
     if session.get('username') and not request.args.get('switch'):
-        return render_template(
-            'loggedin.html',
-            user=session.get('username'),
-            ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
-            )
+       return render_template(
+           'loggedin.html',
+           user=session.get('username'),
+           ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+           )
     else:
-        return render_template(
-            'login.html',
-            userlist=users,
-            ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
-            )
+       return render_template(
+           'login.html',
+           userlist=users,
+           switch=request.args.get('switch'),
+           ms_prefix=cleanPrefix(request.headers.get('X-Forwarded-Prefix'))
+           )
 
 @app.route('/dologin', methods = ['POST'])
 def dologin():
@@ -92,7 +93,12 @@ def dologin():
             msg['ipaddr'] = request.remote_addr
          redis.xadd('CHECK-IDENTITY', msg)
          redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has updated identity" %(form['user'])})
+
  
+      if form['switch'] == "1":
+         redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "Switching session to new user"})
+         redis.execute_command('RG.TRIGGER  rescore {} {}'.format(session.sid.replace("_", ""), form['user']))
+
       redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
       return render_template(
          'loggedin.html',
@@ -103,8 +109,7 @@ def dologin():
 @app.route('/logout')
 def dologout():
     username = request.args.get('user')
-    if not request.args.get('switch'):
-       print("don't clear session")
+    if request.args.get('switch') != "1":
        session.clear()
     redis.xadd(log_stream, {"microservice": "login", "user": username, "message": "%s has logged out" %(username)})
     return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/?switch=1' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))

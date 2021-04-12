@@ -9,7 +9,8 @@ def checkId(msg):
             score += execute('SISMEMBER', "Identity:%s:BrowserFingerprint" % msg['value']['user'], msg['value']['fingerprint'])
 
         msg['value']['identity_score'] = "%.2f" %(score/2.0)
-        msg['value']['cart_id'] =  msg['id']
+        if not 'cart_id' in msg['value']:
+            msg['value']['cart_id'] =  msg['id']
         del msg['value']['action']
         newmsg= [ 'XADD', 'CHECK-PROFILE', '*' ] 
         [newmsg.extend([k,v]) for k,v in msg['value'].items()]
@@ -37,7 +38,8 @@ def checkId(msg):
         msg['value']['profile_score'] = "0"
         msg['value']['identity_score'] = "0"
         msg['value']['ai_score'] = "0"
-        msg['value']['cart_id'] =  msg['id']
+        if not 'cart_id' in msg['value']:
+            msg['value']['cart_id'] =  msg['id']
         del msg['value']['action']
         newmsg= [ 'XADD', "CART-ADD", '*' ]
         [newmsg.extend([k,v]) for k,v in msg['value'].items()]
