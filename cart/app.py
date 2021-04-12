@@ -78,7 +78,7 @@ def catalog():
       load_data(redis_server, redis_port, redis_password)
       redis.xadd(log_stream, {"microservice": "cart", "user": "system", "message": "loaded cart data"})
 
-   query = Query(session.sid).limit_fields("session").paging(0, 50)
+   query = Query(session.sid.replace("-", "")).limit_fields("session").verbatim().paging(0, 50)
    items = client.search(query).docs
    fraudscore = 100
    carttotal = 0.00
@@ -102,7 +102,7 @@ def catalog():
 
 @app.route('/checkout', methods=['POST'])
 def checkout():
-   query = Query(session.sid).limit_fields("session").paging(0, 50)
+   query = Query(session.sid.replace("-", "")).limit_fields("session").paging(0, 50)
    items = client.search(query).docs
    for item in items:
       rb.bfAdd("BFPROFILE:%s:%s" % (item.category, item.level), item.user )

@@ -33,6 +33,21 @@ def checkId(msg):
                 'message', "Updated identity for user: %s" %( msg['value']['user'] )
                 )
 
+    elif  msg['value']['user'] == "Guest":
+        msg['value']['profile_score'] = "0"
+        msg['value']['identity_score'] = "0"
+        msg['value']['ai_score'] = "0"
+        msg['value']['cart_id'] =  msg['id']
+        del msg['value']['action']
+        newmsg= [ 'XADD', "CART-ADD", '*' ]
+        [newmsg.extend([k,v]) for k,v in msg['value'].items()]
+        execute(*newmsg)
+        execute(
+                'XADD', 'microservice-logs', '*',
+                'microservice', 'identity',
+                'user', 'system',
+                'message', "%s user: going directly to cart" %( msg['value']['user'] )
+                )
     else:
         execute(
                 'XADD', 'microservice-logs', '*',

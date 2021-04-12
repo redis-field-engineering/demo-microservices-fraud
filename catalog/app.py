@@ -113,7 +113,7 @@ def purchase():
       "action": "enhance",
       "ipaddr": request.remote_addr,
       "fingerprint": hashlib.md5(request.headers.get('User-Agent').encode('utf-8')).hexdigest(),
-      "session": session.sid,
+      "session": session.sid.replace("-", ""),
    }
    redis.xadd(log_stream, 
    {
