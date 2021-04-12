@@ -66,7 +66,7 @@ def login():
     users = []
     for x in redis.smembers("USER_LIST"):
         users.append(x.decode('utf-8'))
-    if session.get('username'):
+    if session.get('username') and not request.args.get('switch'):
         return render_template(
             'loggedin.html',
             user=session.get('username'),
@@ -103,9 +103,11 @@ def dologin():
 @app.route('/logout')
 def dologout():
     username = request.args.get('user')
-    session.clear()
+    if not request.args.get('switch'):
+       print("don't clear session")
+       session.clear()
     redis.xadd(log_stream, {"microservice": "login", "user": username, "message": "%s has logged out" %(username)})
-    return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))
+    return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/?switch=1' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))
 
 #================== End Routes =================================
 
