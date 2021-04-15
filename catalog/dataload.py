@@ -1,5 +1,7 @@
 from redisearch import AutoCompleter, Client, IndexDefinition, TextField, NumericField, TagField, Suggestion
 import random
+import redis
+import re
 
 
 LEVELS = {
@@ -9,6 +11,24 @@ LEVELS = {
    'premium': {'min': 10000, 'max': 19999},
    'luxury': {'min': 20000, 'max': 99999},
 }
+
+def cart_score(redis_server, redis_port, redis_password, sessionid):
+   c = redis.Redis(
+   host=redis_server,
+   password=redis_password,
+   port=redis_port
+   )
+
+   try:
+      tginfo = c.execute_command('RG.TRIGGER  score {}'.format(sessionid.replace("_", "")))[0].decode('utf-8')
+      match = re.findall(r'\((\d{1,4}), (\d{1,4})\)', tginfo)
+      if match:
+         return(match[0])
+      else:
+         return((0, 0))
+   except:
+      return((0, 0))
+
 
 def load_data(redis_server, redis_port, redis_password):
    load_client = Client(

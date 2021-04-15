@@ -7,6 +7,7 @@ from os import environ
 
 # From our local file
 from dataload import load_data
+from dataload import cart_score
 
 app = Flask(__name__,
             static_url_path='/images',
@@ -89,13 +90,16 @@ def catalog():
    items = client.search(query).docs
    for item in items:
       entries.append(item.__dict__)
+
+   tginfo = cart_score(redis_server, redis_port, redis_password, session.sid.replace("-", ""))
    
    return render_template(
       'catalog.html',
       entries = entries,
       ms_prefix = cleanPrefix(request.headers.get('X-Forwarded-Prefix')),
       username = session.get("username"),
-      fraudscore = "100"
+      fraudscore = tginfo[1],
+      cart_count = tginfo[0],
       )
 
 @app.route('/purchase', methods=['POST'])

@@ -8,6 +8,7 @@ from os import environ
 
 # From our local file
 from dataload import load_data
+from dataload import cart_score
 
 app = Flask(__name__,
             static_url_path='/images',
@@ -85,17 +86,17 @@ def catalog():
    for item in items:
       entries.append(item.__dict__)
       carttotal += float(item.__dict__["unit_price"])*int(item.__dict__["quantity"])
-      fs =  float(item.__dict__["identity_score"]) + float(item.__dict__["profile_score"]) + float(item.__dict__["ai_score"])
-      fs = min(int(100*fs/2.0),100)
-      if fs < fraudscore:
-         fraudscore = fs
 
+
+
+   tginfo = cart_score(redis_server, redis_port, redis_password, session.sid.replace("-", ""))
    
    return render_template(
       'cart.html',
       entries = entries,
       carttotal = carttotal,
-      fraudscore = fraudscore,
+      fraudscore = tginfo[1],
+      cart_count = tginfo[0],
       ms_prefix = cleanPrefix(request.headers.get('X-Forwarded-Prefix')),
       username = session.get("username"),
       )
