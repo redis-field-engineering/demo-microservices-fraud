@@ -67,7 +67,15 @@
 </table>
 <div class="form-group" >
 <form class="d-flex" action = "{{ ms_prefix }}/checkout" method = "POST">
-  <input  class="btn btn-outline-success" type = "submit" value = "Checkout" />
+  {% if username == "Guest" %}
+  <input  class="btn btn-danger"  value = "Create an Account" />
+  {% elif fraudscore|float > 49 %}
+  <img src="/cart/images/captcha.png">
+  <input  class="btn btn-warning"  value = "Captcha" />
+  {% elif fraudscore|float > 49 %}
+  {% else %}
+  <input  class="btn btn-success" type = "submit" value = "Checkout" />
+  {% endif %}
 </form>
 </div>
 
