@@ -62,7 +62,7 @@
      <tr>
      <td>{{ entry['product'] }} </td>
      <td>{{ entry['category'] }} </td>
-     <td>{{ entry['price'] }} </td>
+     <td>${{ "%.2f"|format(entry['price']|float) }} </td>
      <td>
       <form action = "{{ ms_prefix }}/purchase" method = "POST">
       <input id="quantity" type="text" size="1" name="quantity" value="1">
