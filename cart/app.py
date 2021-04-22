@@ -114,10 +114,14 @@ def checkout():
    for item in items:
       rb.bfAdd("BFPROFILE:%s:%s" % (item.category, item.level), item.user )
       rb.bfAdd("BFPROFILE:Category:%s" %(item.category), item.user)
+      redis.xadd(log_stream, {
+         "microservice": "cart",
+         "user": item.user,
+         "message": "purchased quantity:{} item{}".format(item.quantity, item.product_name)})
 
       redis.unlink(item.id)
 
-   return("OK")
+   return "<html> <body> <h2>Thanks for your purchase!</h2><script> var timer = setTimeout(function() { window.location='/' }, 700); </script> </body> </html>" 
 
 #================== End Routes =================================
 
