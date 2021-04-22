@@ -72,6 +72,11 @@ def catalog():
    if not session.get("username"):
       session['username'] = 'Guest'
 
+   if request.args.get('details'):
+      details = True
+   else:
+      details = False
+
    entries = []
    try:
       client.info()
@@ -94,6 +99,7 @@ def catalog():
    return render_template(
       'cart.html',
       entries = entries,
+      details = details,
       carttotal = carttotal,
       fraudscore = tginfo[1],
       cart_count = tginfo[0],
