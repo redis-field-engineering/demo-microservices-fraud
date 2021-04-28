@@ -88,7 +88,6 @@
   <input  class="btn btn-danger"  value = "Create an Account" />
   {% elif fraudscore|float > 49 %}
   <img src="/cart/images/captcha.png">
-  <input  class="btn btn-warning"  value = "Captcha" />
   {% elif fraudscore|float > 49 %}
   {% else %}
   <input  class="btn btn-success" type = "submit" value = "Checkout" />
