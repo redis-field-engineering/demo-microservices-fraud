@@ -114,6 +114,13 @@ def dologout():
     redis.xadd(log_stream, {"microservice": "login", "user": username, "message": "%s has logged out" %(username)})
     return "<html> <body> <p>%s has logged out.</p><p>You will be redirected in 3 seconds</p> <script> var timer = setTimeout(function() { window.location='%s/?switch=1' }, 3000); </script> </body> </html>" %(username, cleanPrefix(request.headers.get('X-Forwarded-Prefix')))
 
+@app.route('/profile')
+def showprofile():
+   user=session.get('username')
+   profile = redis.hgetall("user:profile:{}".format(user))
+   print(profile)
+   return("OK")
+
 #================== End Routes =================================
 
 if __name__ == '__main__':
