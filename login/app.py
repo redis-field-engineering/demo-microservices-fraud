@@ -117,9 +117,15 @@ def dologout():
 @app.route('/profile')
 def showprofile():
    user=session.get('username')
-   profile = redis.hgetall("user:profile:{}".format(user))
-   print(profile)
-   return("OK")
+   p = redis.hgetall("user:profile:{}".format(user))
+   profile = {key.decode('utf-8'):value.decode('utf-8') for (key, value) in p.items()}
+
+
+   return render_template(
+         'userprofile.html',
+         user=session.get('username'),
+         profile=profile,
+         )
 
 #================== End Routes =================================
 
