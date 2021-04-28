@@ -48,9 +48,9 @@
      <table class="table table-striped">
      <tr><th>Category</th><th>Purchases</th></tr>
 
-     {% for item in profile|dictsort(true, 'value') %}
+     {% for item in profile|dictsort(true, 'value', reverse = True) %}
      {% if item[1]|float > 0 %}
-     <tr><td>{{item[0]|string}}</td><td>{{"%.0f"|format(item[1]|float)}}</td></tr>
+     <tr><td>{{item[0]|string}}</td><td>{{item[1]}}</td></tr>
      {% endif %}
      {% endfor %}
 

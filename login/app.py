@@ -118,7 +118,7 @@ def dologout():
 def showprofile():
    user=session.get('username')
    p = redis.hgetall("user:profile:{}".format(user))
-   profile = {key.decode('utf-8'):value.decode('utf-8') for (key, value) in p.items()}
+   profile = {key.decode('utf-8'):int(value) for (key, value) in p.items()}
 
 
    return render_template(
