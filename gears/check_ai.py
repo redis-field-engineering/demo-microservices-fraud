@@ -1,3 +1,4 @@
+from time import sleep
 CATEGORIES = [ 
         "Apparel", "Automotive", "Baby", "Beauty", "Books", "Camera", "Digital_Ebook_Purchase",
         "Digital_Music_Purchase", "Digital_Software", "Digital_Video_Download", "Digital_Video_Games",
@@ -12,16 +13,26 @@ def scoreAI(username, itemCategory, itemQuantity, msgID):
         tnsr_name = "tensor:{}:{}".format(username,msgID)
         tnsr = ["AI.TENSORSET", tnsr_name, "FLOAT", "1", len(CATEGORIES), "VALUES"]
         p = execute("HGETALL", "user:profile:{}".format(username))
-        profile = {p[0::2][i]: p[1::2][i] for i in range(len(p[1::2]))}
+        profile = {p[0::2][i]: int(p[1::2][i]) for i in range(len(p[1::2]))}
         profile[itemCategory] += int(itemQuantity)
         for c in CATEGORIES:
                 tnsr.append(float(profile[c]))
         execute(*tnsr)
+        scmd1 = ['AI.TENSORGET', tnsr_name, "VALUES"]
+        s = execute(*scmd1)
+        execute("SET", "DEBUG-S1", s)
+
         runmodel = ['AI.MODELRUN', 'classifier_model', 'INPUTS', tnsr_name, 'OUTPUTS', "{}:results".format(tnsr_name) ]
         execute(*runmodel)
-        scmd = ['AI.TENSORGET', "{}:results".format(tnsr_name),"VALUES"]
-        s = execute(*scmd)
-        return(float(s[0]))
+        # give this time to score
+        sleep(1)
+        try:
+                scmd = ['AI.TENSORGET', "{}:results".format(tnsr_name), "VALUES"]
+                s = execute(*scmd)
+                execute("SET", "DEBUG", s)
+        except Exception as err:
+                execute("SET", "DEBUG-ERR", err)
+        return(0.0)
 
 #=======================================================================================================================
 def checkAI(msg):
