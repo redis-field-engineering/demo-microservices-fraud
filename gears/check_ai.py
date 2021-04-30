@@ -1,4 +1,9 @@
 from time import sleep
+import numpy as np
+
+# note this redisAI is built into Gears plugins/python/redisgears_python.c 
+import redisAI 
+
 CATEGORIES = [ 
         "Apparel", "Automotive", "Baby", "Beauty", "Books", "Camera", "Digital_Ebook_Purchase",
         "Digital_Music_Purchase", "Digital_Software", "Digital_Video_Download", "Digital_Video_Games",
@@ -11,28 +16,18 @@ CATEGORIES = [
 #=======================================================================================================================
 def scoreAI(username, itemCategory, itemQuantity, msgID):
         tnsr_name = "tensor:{}:{}".format(username,msgID)
-        tnsr = ["AI.TENSORSET", tnsr_name, "FLOAT", "1", len(CATEGORIES), "VALUES"]
-        p = execute("HGETALL", "user:profile:{}".format(username))
-        profile = {p[0::2][i]: int(p[1::2][i]) for i in range(len(p[1::2]))}
-        profile[itemCategory] += int(itemQuantity)
-        for c in CATEGORIES:
-                tnsr.append(float(profile[c]))
-        execute(*tnsr)
-        scmd1 = ['AI.TENSORGET', tnsr_name, "VALUES"]
-        s = execute(*scmd1)
-        execute("SET", "DEBUG-S1", s)
-
-        runmodel = ['AI.MODELRUN', 'classifier_model', 'INPUTS', tnsr_name, 'OUTPUTS', "{}:results".format(tnsr_name) ]
-        execute(*runmodel)
-        # give this time to score
-        sleep(1)
-        try:
-                scmd = ['AI.TENSORGET', "{}:results".format(tnsr_name), "VALUES"]
-                s = execute(*scmd)
-                execute("SET", "DEBUG", s)
-        except Exception as err:
-                execute("SET", "DEBUG-ERR", err)
-        return(0.0)
+        tnsr = redisAI.createTensorFromValues('FLOAT', [0,2,0,1,9,0,139,0,0,0,0,0,0,0,0,1,0,3,1,1,0,4,0,0,0,0,1,0,2,0,4,0,1,0,0,0,0,4,0,0,0,0,5])
+#        profile = {key.decode('utf-8'): float(value) for key,value in conn.hgetall("user:profile:{}".format(username)).items()}
+#        profile[itemCategory] += int(itemQuantity)
+#        tnsr = []
+#        for c in CATEGORIES:
+#                tnsr.append(float(profile[c]))
+#
+        #conn.tensorset(tnsr_name, tnsr, dtype='float', shape=[1,43])
+        #conn.modelrun('classifier_model',inputs=[tnsr_name], outputs=["{}:results".format(tnsr_name) ])
+        #res = conn.tensorget("{}:results".format(tnsr_name))
+        #return(res[0][0])
+        return(1.0)
 
 #=======================================================================================================================
 def checkAI(msg):
