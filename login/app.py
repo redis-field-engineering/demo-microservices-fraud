@@ -97,7 +97,14 @@ def dologin():
  
       if form['switch'] == "1":
          redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "Switching session to new user"})
-         redis.execute_command('RG.TRIGGER  rescore {} {}'.format(session.sid.replace("_", ""), form['user']))
+         items = redis.execute_command("FT.SEARCH", "ShoppingCart", "@session:{}".format(session.sid.replace("_", "")))
+         for item in items[2::2]:
+             res_dct = {item[i]: item[i + 1] for i in range(0, len(item), 2)}
+             res_dct['user'] = form['user']
+             res_dct["action"] = "enhance"
+             redis.xadd('CHECK-IDENTITY', res_dct)
+
+
 
       redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "%s has logged in" %(form['user'])})
       return render_template(

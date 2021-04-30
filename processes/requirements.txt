@@ -1,0 +1,8 @@
+hiredis==2.0.0
+numpy==1.20.2
+redis==3.5.3
+redisai==1.0.2
+redisbloom==0.4.0
+redisearch==2.0.0
+rmtest==0.7.0
+six==1.15.0
