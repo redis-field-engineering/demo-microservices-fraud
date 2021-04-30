@@ -23,6 +23,18 @@ if [ $? != 0 ]; then
 	tmux new-window -d -t "=ms-demo" -n "Cart"
 	tmux send-keys -t :"Cart" "cd cart && source cart-venv/bin/activate && python3 app.py" Enter
 
+	tmux new-window -d -t "=ms-demo" -n "check_id"
+	tmux send-keys -t :"check_id" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_identity.py" Enter
+
+	tmux new-window -d -t "=ms-demo" -n "check_profile"
+	tmux send-keys -t :"check_profile" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_profile.py" Enter
+
+	tmux new-window -d -t "=ms-demo" -n "check_ai"
+	tmux send-keys -t :"check_ai" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_ai.py" Enter
+
+	tmux new-window -d -t "=ms-demo" -n "cart_add"
+	tmux send-keys -t :"cart_add" "cd processes && source processes-venv/bin/activate && sleep 10 && ./cart_add.py" Enter
+
 fi
 
 tmux attach -t ms-demo

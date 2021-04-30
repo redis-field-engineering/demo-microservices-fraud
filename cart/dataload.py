@@ -11,6 +11,10 @@ def cart_score(redis_server, redis_port, redis_password, sessionid):
    )
 
    try:
+      if int(c.exists("CART_SCORE:{}".format(sessionid.replace("_", "")))) > 0:
+         sc = c.hgetall("CART_SCORE:{}".format(sessionid.replace("_", "")))
+         print(sc)
+         return((sc[b'items'].decode('utf-8'), max([0, float(sc[b'score'].decode('utf-8'))])))
       tginfo = c.execute_command('RG.TRIGGER  score {}'.format(sessionid.replace("_", "")))[0].decode('utf-8')
       match = re.findall(r'\((\d{1,4}), (\d{1,4})\)', tginfo)
       if match:

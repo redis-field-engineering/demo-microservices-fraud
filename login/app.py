@@ -97,7 +97,8 @@ def dologin():
  
       if form['switch'] == "1":
          redis.xadd(log_stream, {"microservice": "login", "user": form['user'], "message": "Switching session to new user"})
-         items = redis.execute_command("FT.SEARCH", "ShoppingCart", "@session:{}".format(session.sid.replace("_", "")))
+         items = redis.execute_command("FT.SEARCH", "ShoppingCart", "@session:{}".format(session.sid.replace("-", "")))
+         print("rescoring", items)
          for item in items[2::2]:
              res_dct = {item[i]: item[i + 1] for i in range(0, len(item), 2)}
              res_dct['user'] = form['user']

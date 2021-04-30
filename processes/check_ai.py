@@ -3,7 +3,7 @@
 import redis
 from os import environ
 
-stream = "CHECK-PROFILE"
+stream = "CHECK-AI"
 
 if environ.get('REDIS_SERVER') is not None:
    redis_server = environ.get('REDIS_SERVER')
@@ -53,28 +53,11 @@ while True :
 
             #--------------------------------------------------------------------------------
             if msg_vals['user'] != "Guest":
-                score = 0.0
-                score += int(r.execute_command(
-                    'BF.EXISTS',
-                    "BFPROFILE:{}:{}".format(msg_vals['category'], msg_vals['level']),
-                    msg_vals['user']))
-                score += int(r.execute_command(
-                    'BF.EXISTS',
-                    "BFPROFILE:Category:{}".format(msg_vals['category']),
-                    msg_vals['user']))
-                msg_vals['profile_score'] = "%.2f" %(score/2.0)
-
-                if msg_vals['user'] == "Guest":
-                    next_stage = "CART-ADD"
-                    msg_vals['ai_score'] = 0.00
-                elif score + float(msg_vals['identity_score']) < 1.5:
-                    next_stage = "CHECK-AI"
-                else:
-                    next_stage = "CART-ADD"
-                    msg_vals['ai_score'] = 0.00
-                r.xadd(next_stage, msg_vals)
+                score = 0.333
+                msg_vals['ai_score'] = score
+                r.xadd("CART-ADD", msg_vals)
                 r.xadd('microservice-logs',
-                    {'microservice': 'profile',
+                    {'microservice': 'ai',
                     'user': 'system',
-                    'message': "Check profile for user: %s , result: %f , next_stage: %s" %( msg_vals['user'], score/2.0, next_stage )
+                    'message': "Just a set AI score until we get this working"
                     })
