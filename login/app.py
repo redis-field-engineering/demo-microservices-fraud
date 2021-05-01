@@ -117,6 +117,7 @@ def dologin():
 @app.route('/logout')
 def dologout():
     username = request.args.get('user')
+    redis.unlink("CART_SCORE:{}".format(session.sid.replace("-", "")))
     if request.args.get('switch') != "1":
        session.clear()
     redis.xadd(log_stream, {"microservice": "login", "user": username, "message": "%s has logged out" %(username)})

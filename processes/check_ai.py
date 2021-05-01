@@ -2,6 +2,9 @@
 
 import redis
 from os import environ
+import redisai
+import numpy as np
+
 
 stream = "CHECK-AI"
 
@@ -25,7 +28,18 @@ if environ.get('REDIS_STREAM_GROUP') is not None:
 else:
    redis_stream_group = stream
 
-r = redis.Redis(
+CATEGORIES = [
+ "Apparel", "Automotive", "Baby", "Beauty", "Books", "Camera",
+ "Digital_Ebook_Purchase", "Digital_Music_Purchase", "Digital_Software", "Digital_Video_Download", "Digital_Video_Games",
+ "Electronics", "Furniture", "Gift_Card", "Grocery", "Health_Personal_Care", "Home_Entertainment",
+ "Home_Improvement", "Home", "Jewelry", "Kitchen", "Lawn_and_Garden", "Luggage",
+ "Major_Appliances", "Mobile_Apps", "Mobile_Electronics", "Musical_Instruments", "Music", "Office_Products",
+ "Outdoors", "PC", "Personal_Care_Appliances", "Pet_Products", "Shoes", "Software", "Sports", "Tools", "Toys", "Video_DVD",
+ "Video_Games", "Video", "Watches", "Wireless"
+]
+
+
+r = redisai.Client(
     host = redis_server,
     port = redis_port,
     password = redis_password,
@@ -35,6 +49,28 @@ try:
     r.xgroup_create(stream, redis_stream_group, mkstream=True)
 except:
     x=1
+
+def score_ai(user, category, item_count):
+    tnsr_name = "TENSOR:{}:{}:{}".format(user, category, item_count)
+    try:
+        x = r.hgetall("user:profile:{}".format(user))
+        profile = {k.decode('utf-8'): float(v.decode('utf-8')) for k, v in x.items()}
+        profile[category] += int(item_count)
+        tnsr = []
+        for c in CATEGORIES:
+            tnsr.append(float(profile[c]))
+        r.tensorset(tnsr_name, tnsr, shape=[1, 43],dtype='float')
+        profile_results = r.modelrun('classifier_model', tnsr_name, "{}:results".format(tnsr_name))
+        res = r.tensorget("{}:results".format(tnsr_name))[0][0]
+    except Exception as err:
+        print("broken yo", err)
+        res = 0.0
+
+    #cleanup any tensors
+    r.delete(tnsr_name)
+    r.delete("{}:results".format(tnsr_name))
+
+    return("{}".format(res))
 
 
 while True :
@@ -53,7 +89,7 @@ while True :
 
             #--------------------------------------------------------------------------------
             if msg_vals['user'] != "Guest":
-                score = 0.333
+                score = score_ai(msg_vals['user'], msg_vals['category'], msg_vals['quantity'])
                 msg_vals['ai_score'] = score
                 r.xadd("CART-ADD", msg_vals)
                 r.xadd('microservice-logs',

@@ -61,7 +61,9 @@ while True :
             items = r.search(query).docs
             for item in items:
                scorehash['items'] += 1
-               scorehash['scores'].append(int(100*(float(item.ai_score) + float(item.identity_score) + float(item.profile_score)/2)))
+               x = float(item.ai_score) + float(item.identity_score) + float(item.profile_score)
+               x = min(2, x)
+               scorehash['scores'].append(int(100*x/2))
 
             if scorehash['items'] > 0:
                scorehash['score'] = 100 - min(scorehash['scores'])
