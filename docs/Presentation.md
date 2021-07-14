@@ -13,13 +13,13 @@ slideNumber: false
 
 ## Goals
 
+- Minimize detection time
+
 - Stop fraud as early as possible in the process
 
 - Layer the approach for maximum efficiency 
 
 - Only run computationally expensive calculations when absolutely necessary
-
-- Use event sourcing and microservices for ease of update
 
 ---
 
@@ -50,8 +50,6 @@ slideNumber: false
 
 |Component|Usage|
 |--|--|
-|Redis Streams | Message bus |
-|Redis Gears | Event processing |
 |Redis Search | Catalog and Shopping Cart |
 |Redis Bloom | User purchase profiles |
 |Redis AI | Cart scoring |
@@ -61,7 +59,6 @@ slideNumber: false
 
 ## Services - Identity
 
-### Redis Gear
 <br>
 
 - Check user session (cookie)
@@ -73,7 +70,7 @@ slideNumber: false
 
 ## Services - Profile
 
-### Redis Gear/Bloom
+### Redis Bloom
 <br>
 
 - purchased from this category before?
@@ -84,23 +81,34 @@ slideNumber: false
 
 ## Services - AI
 
-### Redis Gear/AI
+### Redis AI
 <br>
 
-- basket comparison
+- Market Basket Analysis
 - to be avoided if possible
 - Score AI 0.0-1.0
 
 ---
 
+## Scoring
+
+<small>
+
+- Each stage checks the cumulative score
+- If it exceeds 1.5 we consider it safe and proceed
+- Unsafe scores in the cart require further action
+
+</small>
+
+---
+
 ## Services - Cart
 
-### Redis Gear
+### Redis Search
 <br>
 
-- store in search
+- stored in search by session
 - rescore can be triggered
-- other services use gear to display information
 
 ---
 
