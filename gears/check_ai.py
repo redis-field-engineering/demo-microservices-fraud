@@ -16,18 +16,25 @@ CATEGORIES = [
 #=======================================================================================================================
 def scoreAI(username, itemCategory, itemQuantity, msgID):
         tnsr_name = "tensor:{}:{}".format(username,msgID)
-        tnsr = redisAI.createTensorFromValues('FLOAT', [0,2,0,1,9,0,139,0,0,0,0,0,0,0,0,1,0,3,1,1,0,4,0,0,0,0,1,0,2,0,4,0,1,0,0,0,0,4,0,0,0,0,5])
-#        profile = {key.decode('utf-8'): float(value) for key,value in conn.hgetall("user:profile:{}".format(username)).items()}
-#        profile[itemCategory] += int(itemQuantity)
-#        tnsr = []
-#        for c in CATEGORIES:
-#                tnsr.append(float(profile[c]))
-#
-        #conn.tensorset(tnsr_name, tnsr, dtype='float', shape=[1,43])
+        p = execute("HGETALL", "user:profile:{}".format(username))
+        profile = {p[0::2][i]: float(p[1::2][i]) for i in range(len(p[1::2]))}
+        profile[itemCategory] += int(itemQuantity)
+        tnsr = np.empty((1, 43), dtype=np.float32)
+        i = 0
+        for c in CATEGORIES:
+                tnsr[0][i] = float(profile[c])
+
+        tensor = redisAI.createTensorFromBlob('FLOAT', tnsr.shape, tnsr.tobytes())
+        #redisAI.setTensorInKey(tnsr_name, tensor)
+        modelRunner = redisAI.createModelRunner('classifier_model')
+        redisAI.modelRunnerAddInput(modelRunner, 'x', tensor)
+        redisAI.modelRunnerAddOutput(modelRunner, "{}:results".format(tnsr_name))
+        return(redisAI.modelRunnerRun(modelRunner)[0])
+
         #conn.modelrun('classifier_model',inputs=[tnsr_name], outputs=["{}:results".format(tnsr_name) ])
         #res = conn.tensorget("{}:results".format(tnsr_name))
         #return(res[0][0])
-        return(1.0)
+        #return(1.0)
 
 #=======================================================================================================================
 def checkAI(msg):
