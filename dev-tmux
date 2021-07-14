@@ -12,28 +12,28 @@ if [ $? != 0 ]; then
 	tmux send-keys -t :"Kong" "docker run --rm --name kong -e KONG_DATABASE=off -e KONG_PROXY_ACCESS_LOG=/dev/stdout -e KONG_ADMIN_ACCESS_LOG=/dev/stdout -e KONG_PROXY_ERROR_LOG=/dev/stderr -e KONG_ADMIN_ERROR_LOG=/dev/stderr -e \"KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl\" -p 8000:8000 -p 8443:8443 -p 8001:8001 -p 8444:8444 kong" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "Catalog"
-	tmux send-keys -t :"Catalog" "cd catalog && source catalog-venv/bin/activate && python3 app.py" Enter
+	tmux send-keys -t :"Catalog" "cd catalog && source catalog-venv/bin/activate && python app.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "Login"
-	tmux send-keys -t :"Login" "cd login && source login-venv/bin/activate && python3 app.py" Enter
+	tmux send-keys -t :"Login" "cd login && source login-venv/bin/activate && python app.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "Logs"
-	tmux send-keys -t :"Logs" "cd logs && source logs-venv/bin/activate && python3 app.py" Enter
+	tmux send-keys -t :"Logs" "cd logs && source logs-venv/bin/activate && python app.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "Cart"
-	tmux send-keys -t :"Cart" "cd cart && source cart-venv/bin/activate && python3 app.py" Enter
+	tmux send-keys -t :"Cart" "cd cart && source cart-venv/bin/activate && python app.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "check_id"
-	tmux send-keys -t :"check_id" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_identity.py" Enter
+	tmux send-keys -t :"check_id" "cd processes && source processes-venv/bin/activate && sleep 10 && python ./check_identity.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "check_profile"
-	tmux send-keys -t :"check_profile" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_profile.py" Enter
+	tmux send-keys -t :"check_profile" "cd processes && source processes-venv/bin/activate && sleep 10 && python ./check_profile.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "check_ai"
-	tmux send-keys -t :"check_ai" "cd processes && source processes-venv/bin/activate && sleep 10 && ./check_ai.py" Enter
+	tmux send-keys -t :"check_ai" "cd processes && source processes-venv/bin/activate && sleep 10 && python ./check_ai.py" Enter
 
 	tmux new-window -d -t "=ms-demo" -n "cart_add"
-	tmux send-keys -t :"cart_add" "cd processes && source processes-venv/bin/activate && sleep 10 && ./cart_add.py" Enter
+	tmux send-keys -t :"cart_add" "cd processes && source processes-venv/bin/activate && sleep 10 && python ./cart_add.py" Enter
 
 fi
 
